@@ -56,3 +56,58 @@
 - [x] Update export to work per-report basis
 - [x] Add "Clear Data" or "Start New Report" functionality
 
+
+
+## Phase 8: Property Search & Acquisition Intelligence (NEW FEATURE)
+
+### Phase 8.1: Search Infrastructure & UI
+- [x] Design search configuration UI with geographic area input
+- [x] Create property search database schema (searches, results, sources, tracking)
+- [x] Build search job queue system for async processing
+- [x] Implement search history and saved searches functionality
+- [x] Add search results dashboard with three-tier categorization (Immediate/Developing/Future)
+
+### Phase 8.2: Data Source Integration
+- [ ] Research and evaluate available real estate APIs (LoopNet, CoStar, Crexi)
+- [ ] Integrate with real estate listing APIs
+- [ ] Build web scraping system for public records (permits, deeds)
+- [ ] Implement news monitoring with NewsAPI or similar
+- [ ] Add public records integration (county recorders, planning commissions)
+- [ ] Create data normalization pipeline for multi-source data
+
+### Phase 8.3: Intelligence & Scoring System
+- [ ] Implement opportunity scoring algorithm based on multiple factors
+- [ ] Add underperformance detection (occupancy, violations, maintenance)
+- [ ] Create company distress signal detection
+- [ ] Build market metrics tracking (price/unit, cap rates, vacancy)
+- [ ] Add comparative analysis vs market benchmarks
+
+### Phase 8.4: Search Execution & Results
+- [ ] Build parallel search execution across multiple sources
+- [ ] Implement result deduplication and matching
+- [ ] Create property detail view with full information
+- [ ] Add map visualization of opportunities
+- [ ] Build filtering and sorting for search results
+- [ ] Implement property comparison features
+
+### Phase 8.5: Reporting & Export
+- [ ] Generate formatted search reports (PDF/Excel)
+- [ ] Create market intelligence summary reports
+- [ ] Add opportunity tracking workflow
+- [ ] Implement alert system for high-priority matches
+- [ ] Build email notifications for search completion
+
+### Phase 8.6: Automation & Scheduling
+- [ ] Add recurring search scheduling
+- [ ] Implement automated daily/weekly search execution
+- [ ] Create automated report generation and delivery
+- [ ] Add search result change tracking (new opportunities)
+- [ ] Build alert system for urgent opportunities
+
+### Phase 8.7: Advanced Features
+- [ ] Add AI-powered property valuation estimates
+- [ ] Implement predictive analytics for market trends
+- [ ] Create portfolio optimization recommendations
+- [ ] Add competitive intelligence tracking
+- [ ] Build social sentiment analysis for properties/companies
+

@@ -9,7 +9,9 @@ import Upload from "./pages/Upload";
 import Report from "./pages/Report";
 import Reports from "./pages/Reports";
 import ReportDetail from "./pages/ReportDetail";
-import { FileSpreadsheet, Upload as UploadIcon, BarChart3 } from "lucide-react";
+import PropertySearch from "./pages/PropertySearch";
+import SearchResults from "./pages/SearchResults";
+import { FileSpreadsheet, Upload as UploadIcon, BarChart3, Search } from "lucide-react";
 import { APP_TITLE } from "./const";
 
 function Router() {
@@ -33,6 +35,10 @@ function Router() {
               <BarChart3 className="h-4 w-4" />
               Reports
             </Link>
+            <Link href="/property-search" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+              <Search className="h-4 w-4" />
+              Property Search
+            </Link>
           </nav>
         </div>
       </header>
@@ -43,6 +49,8 @@ function Router() {
           <Route path="/reports" component={Reports} />
           <Route path="/report/:id" component={ReportDetail} />
           <Route path="/report" component={Report} />
+          <Route path="/property-search" component={PropertySearch} />
+          <Route path="/search/:id" component={SearchResults} />
           <Route path="/404" component={NotFound} />
           <Route component={NotFound} />
         </Switch>

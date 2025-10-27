@@ -169,3 +169,116 @@ export const marketReports = mysqlTable("marketReports", {
 export type MarketReport = typeof marketReports.$inferSelect;
 export type InsertMarketReport = typeof marketReports.$inferInsert;
 
+/**
+ * Property searches - tracks search configurations and executions
+ */
+export const propertySearches = mysqlTable("propertySearches", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  geographicArea: varchar("geographicArea", { length: 255 }).notNull(), // City, county, metro, state
+  propertyClass: varchar("propertyClass", { length: 50 }).default("B- to A+"),
+  minUnits: int("minUnits").default(100),
+  maxUnits: int("maxUnits"),
+  searchDepth: mysqlEnum("searchDepth", ["quick", "deep"]).default("quick").notNull(),
+  timeframe: mysqlEnum("timeframe", ["24h", "48h", "7d", "30d"]).default("48h").notNull(),
+  status: mysqlEnum("status", ["pending", "running", "completed", "error"]).default("pending").notNull(),
+  
+  // Results summary
+  totalResults: int("totalResults").default(0),
+  immediateOpportunities: int("immediateOpportunities").default(0),
+  developingOpportunities: int("developingOpportunities").default(0),
+  futureOpportunities: int("futureOpportunities").default(0),
+  
+  // Scheduling
+  isRecurring: boolean("isRecurring").default(false),
+  recurringSchedule: varchar("recurringSchedule", { length: 100 }), // cron expression
+  
+  // Metadata
+  createdBy: varchar("createdBy", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  startedAt: timestamp("startedAt"),
+  completedAt: timestamp("completedAt"),
+  errorMessage: text("errorMessage"),
+});
+
+export type PropertySearch = typeof propertySearches.$inferSelect;
+export type InsertPropertySearch = typeof propertySearches.$inferInsert;
+
+/**
+ * Search results - individual properties found during searches
+ */
+export const searchResults = mysqlTable("searchResults", {
+  id: int("id").autoincrement().primaryKey(),
+  searchId: int("searchId").notNull().references(() => propertySearches.id, { onDelete: "cascade" }),
+  
+  // Property information
+  propertyName: varchar("propertyName", { length: 255 }).notNull(),
+  address: varchar("address", { length: 500 }),
+  city: varchar("city", { length: 100 }),
+  state: varchar("state", { length: 50 }),
+  zipCode: varchar("zipCode", { length: 20 }),
+  
+  // Property details
+  units: int("units"),
+  propertyClass: varchar("propertyClass", { length: 50 }),
+  yearBuilt: int("yearBuilt"),
+  price: int("price"), // in dollars
+  pricePerUnit: int("pricePerUnit"),
+  
+  // Opportunity classification
+  opportunityType: mysqlEnum("opportunityType", [
+    "new_listing",
+    "distressed_sale",
+    "new_construction",
+    "underperforming",
+    "company_distress",
+    "off_market"
+  ]).notNull(),
+  urgencyLevel: mysqlEnum("urgencyLevel", ["immediate", "developing", "future"]).notNull(),
+  
+  // Metrics
+  occupancyRate: decimal("occupancyRate", { precision: 5, scale: 2 }),
+  capRate: decimal("capRate", { precision: 5, scale: 2 }),
+  daysOnMarket: int("daysOnMarket"),
+  
+  // Scoring
+  score: int("score").default(0), // 0-100 score based on multiple factors
+  
+  // Source information
+  dataSource: varchar("dataSource", { length: 100 }), // LoopNet, CoStar, etc.
+  sourceUrl: varchar("sourceUrl", { length: 500 }),
+  rawData: text("rawData"), // JSON string of original data
+  
+  // Tracking
+  status: mysqlEnum("status", ["new", "reviewing", "contacted", "pursuing", "passed", "closed"]).default("new"),
+  notes: text("notes"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SearchResult = typeof searchResults.$inferSelect;
+export type InsertSearchResult = typeof searchResults.$inferInsert;
+
+/**
+ * Market metrics - tracking key market indicators over time
+ */
+export const marketMetrics = mysqlTable("marketMetrics", {
+  id: int("id").autoincrement().primaryKey(),
+  marketName: varchar("marketName", { length: 255 }).notNull(), // City or metro area
+  date: timestamp("date").notNull(),
+  
+  // Key metrics
+  avgPricePerUnit: int("avgPricePerUnit"),
+  avgCapRate: decimal("avgCapRate", { precision: 5, scale: 2 }),
+  vacancyRate: decimal("vacancyRate", { precision: 5, scale: 2 }),
+  absorptionRate: decimal("absorptionRate", { precision: 5, scale: 2 }),
+  avgDaysOnMarket: int("avgDaysOnMarket"),
+  
+  dataSource: varchar("dataSource", { length: 100 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type MarketMetric = typeof marketMetrics.$inferSelect;
+export type InsertMarketMetric = typeof marketMetrics.$inferInsert;
+
