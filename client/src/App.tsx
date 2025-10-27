@@ -1,20 +1,49 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, Link } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import Upload from "./pages/Upload";
+import Report from "./pages/Report";
+import { FileSpreadsheet, Upload as UploadIcon, BarChart3 } from "lucide-react";
+import { APP_TITLE } from "./const";
 
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
-    <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
-    </Switch>
+    <div className="min-h-screen flex flex-col">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="container flex h-16 items-center">
+          <div className="flex items-center gap-2 mr-8">
+            <FileSpreadsheet className="h-6 w-6" />
+            <span className="font-bold text-lg">{APP_TITLE}</span>
+          </div>
+          <nav className="flex items-center gap-6">
+            <Link href="/" className="text-sm font-medium transition-colors hover:text-primary">
+              Home
+            </Link>
+            <Link href="/upload" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+              <UploadIcon className="h-4 w-4" />
+              Upload
+            </Link>
+            <Link href="/report" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+              <BarChart3 className="h-4 w-4" />
+              Report
+            </Link>
+          </nav>
+        </div>
+      </header>
+      <main className="flex-1">
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/upload" component={Upload} />
+          <Route path="/report" component={Report} />
+          <Route path="/404" component={NotFound} />
+          <Route component={NotFound} />
+        </Switch>
+      </main>
+    </div>
   );
 }
 

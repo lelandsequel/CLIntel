@@ -1,17 +1,10 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, json } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
- * Extend this file with additional tables as your product grows.
- * Columns use camelCase to match both database fields and generated types.
  */
 export const users = mysqlTable("users", {
-  /**
-   * Surrogate primary key. Auto-incremented numeric value managed by the database.
-   * Use this for relations between tables.
-   */
   id: int("id").autoincrement().primaryKey(),
-  /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. */
   openId: varchar("openId", { length: 64 }).notNull().unique(),
   name: text("name"),
   email: varchar("email", { length: 320 }),
@@ -25,4 +18,128 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/**
+ * Properties table - stores information about properties (both subject and comps)
+ */
+export const properties = mysqlTable("properties", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  isSubject: boolean("isSubject").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Property = typeof properties.$inferSelect;
+export type InsertProperty = typeof properties.$inferInsert;
+
+/**
+ * Data imports table - tracks all data import operations
+ */
+export const dataImports = mysqlTable("dataImports", {
+  id: int("id").autoincrement().primaryKey(),
+  importDate: timestamp("importDate").defaultNow().notNull(),
+  source: mysqlEnum("source", ["AIQ", "RedIQ"]).notNull(),
+  fileName: varchar("fileName", { length: 255 }),
+  fileSize: int("fileSize"), // in bytes
+  status: mysqlEnum("status", ["pending", "processing", "completed", "error"]).default("pending").notNull(),
+  recordsImported: int("recordsImported").default(0),
+  recordsFailed: int("recordsFailed").default(0),
+  errorMessage: text("errorMessage"),
+  createdBy: varchar("createdBy", { length: 255 }),
+  processingTimeMs: int("processingTimeMs"), // processing duration in milliseconds
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DataImport = typeof dataImports.$inferSelect;
+export type InsertDataImport = typeof dataImports.$inferInsert;
+
+/**
+ * Floor plans table - stores floor plan data from both AIQ and RedIQ sources
+ */
+export const floorPlans = mysqlTable("floorPlans", {
+  id: int("id").autoincrement().primaryKey(),
+  propertyId: int("propertyId").notNull().references(() => properties.id, { onDelete: "cascade" }),
+  
+  // Basic floor plan information
+  floorPlanName: varchar("floorPlanName", { length: 255 }),
+  bedrooms: decimal("bedrooms", { precision: 3, scale: 1 }),
+  bathrooms: decimal("bathrooms", { precision: 3, scale: 1 }),
+  squareFeet: int("squareFeet"),
+  
+  // Rent information
+  marketRent: decimal("marketRent", { precision: 10, scale: 2 }),
+  effectiveRent: decimal("effectiveRent", { precision: 10, scale: 2 }),
+  
+  // AIQ specific
+  unitsAvailable: int("unitsAvailable"),
+  
+  // RedIQ specific
+  amcRent: decimal("amcRent", { precision: 10, scale: 2 }),
+  rediqColumnS: text("rediqColumnS"), // RedIQ Column S (special column)
+  numberOfUnits: int("numberOfUnits"), // For summary calculations
+  
+  // Manual entry columns
+  brokerRent: decimal("brokerRent", { precision: 10, scale: 2 }),
+  manualAmcRent: decimal("manualAmcRent", { precision: 10, scale: 2 }), // Manual AMC rent entry
+  
+  // Calculated fields
+  rentPsf: decimal("rentPsf", { precision: 10, scale: 4 }), // Rent per square foot
+  pricingToolValue: decimal("pricingToolValue", { precision: 10, scale: 2 }),
+  
+  // Metadata
+  dataSource: mysqlEnum("dataSource", ["AIQ", "RedIQ"]).notNull(),
+  importId: int("importId").references(() => dataImports.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type FloorPlan = typeof floorPlans.$inferSelect;
+export type InsertFloorPlan = typeof floorPlans.$inferInsert;
+
+/**
+ * Leasing data table - stores RedIQ leasing data (key-value pairs for various metrics)
+ */
+export const leasingData = mysqlTable("leasingData", {
+  id: int("id").autoincrement().primaryKey(),
+  propertyId: int("propertyId").notNull().references(() => properties.id, { onDelete: "cascade" }),
+  metricName: varchar("metricName", { length: 255 }).notNull(),
+  metricValue: text("metricValue"),
+  metricType: mysqlEnum("metricType", ["number", "percentage", "currency", "text"]),
+  displayOrder: int("displayOrder").default(0),
+  dataSource: varchar("dataSource", { length: 50 }).default("RedIQ"),
+  importId: int("importId").references(() => dataImports.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type LeasingData = typeof leasingData.$inferSelect;
+export type InsertLeasingData = typeof leasingData.$inferInsert;
+
+/**
+ * Reports table - stores generated report configurations
+ */
+export const reports = mysqlTable("reports", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  subjectPropertyId: int("subjectPropertyId").references(() => properties.id),
+  description: text("description"),
+  
+  // Report configuration
+  includeSummary: boolean("includeSummary").default(true),
+  includeLeasingData: boolean("includeLeasingData").default(true),
+  selectedColumns: json("selectedColumns"), // Array of column names to include
+  filters: json("filters"), // Filter criteria
+  sortConfig: json("sortConfig"), // Sort configuration
+  
+  // Metadata
+  createdBy: varchar("createdBy", { length: 255 }),
+  lastGeneratedAt: timestamp("lastGeneratedAt"),
+  generationCount: int("generationCount").default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Report = typeof reports.$inferSelect;
+export type InsertReport = typeof reports.$inferInsert;
+
