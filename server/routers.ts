@@ -4,11 +4,13 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { dataRouter } from "./routers/dataRouter";
 import { exportRouter } from "./routers/exportRouter";
+import { reportRouter } from "./routers/reportRouter";
 
 export const appRouter = router({
   system: systemRouter,
   data: dataRouter,
   export: exportRouter,
+  reports: reportRouter,
 
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

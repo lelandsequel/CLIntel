@@ -14,6 +14,7 @@ export const dataRouter = router({
       fileName: z.string(),
       fileData: z.string(), // Base64 encoded file data
       subjectPropertyName: z.string().optional(),
+      reportId: z.number().optional(), // Link to specific report
     }))
     .mutation(async ({ input }) => {
       const db = await getDb();
@@ -33,6 +34,7 @@ export const dataRouter = router({
         
         // Create import record
         const [importRecord] = await db.insert(dataImports).values({
+          reportId: input.reportId,
           source: 'AIQ',
           fileName: input.fileName,
           fileSize: buffer.length,
@@ -76,6 +78,7 @@ export const dataRouter = router({
               
               // Insert floor plan data
               await db.insert(floorPlans).values({
+                reportId: input.reportId,
                 propertyId: propertyRecord.id,
                 floorPlanName: row.floorPlan,
                 bedrooms: row.bedCount?.toString() || null,
@@ -138,6 +141,7 @@ export const dataRouter = router({
       fileName: z.string(),
       fileData: z.string(), // Base64 encoded file data
       subjectPropertyName: z.string(),
+      reportId: z.number().optional(), // Link to specific report
     }))
     .mutation(async ({ input }) => {
       const db = await getDb();
@@ -157,6 +161,7 @@ export const dataRouter = router({
         
         // Create import record
         const [importRecord] = await db.insert(dataImports).values({
+          reportId: input.reportId,
           source: 'RedIQ',
           fileName: input.fileName,
           fileSize: buffer.length,
@@ -206,6 +211,7 @@ export const dataRouter = router({
               
               // Insert floor plan data
               await db.insert(floorPlans).values({
+                reportId: input.reportId,
                 propertyId: subjectProperty.id,
                 floorPlanName: row.floorPlan,
                 bedrooms: row.bed?.toString() || null,
@@ -288,20 +294,26 @@ export const dataRouter = router({
    */
   getConsolidatedData: publicProcedure
     .input(z.object({
+      reportId: z.number().optional(),
       subjectPropertyId: z.number().optional(),
     }))
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];
       
-      // Get all floor plans with their properties
-      const allFloorPlans = await db.select({
+      // Build where clause
+      let whereClause = input.reportId ? eq(floorPlans.reportId, input.reportId) : undefined;
+      
+      // Get floor plans with their properties
+      const query = db.select({
         floorPlan: floorPlans,
         property: properties,
       })
       .from(floorPlans)
       .leftJoin(properties, eq(floorPlans.propertyId, properties.id))
       .orderBy(desc(properties.isSubject), properties.name);
+      
+      const allFloorPlans = whereClause ? await query.where(whereClause) : await query;
       
       return allFloorPlans;
     }),

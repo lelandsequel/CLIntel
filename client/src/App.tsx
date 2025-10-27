@@ -7,6 +7,8 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Upload from "./pages/Upload";
 import Report from "./pages/Report";
+import Reports from "./pages/Reports";
+import ReportDetail from "./pages/ReportDetail";
 import { FileSpreadsheet, Upload as UploadIcon, BarChart3 } from "lucide-react";
 import { APP_TITLE } from "./const";
 
@@ -27,9 +29,9 @@ function Router() {
               <UploadIcon className="h-4 w-4" />
               Upload
             </Link>
-            <Link href="/report" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+            <Link href="/reports" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
               <BarChart3 className="h-4 w-4" />
-              Report
+              Reports
             </Link>
           </nav>
         </div>
@@ -38,6 +40,8 @@ function Router() {
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/upload" component={Upload} />
+          <Route path="/reports" component={Reports} />
+          <Route path="/report/:id" component={ReportDetail} />
           <Route path="/report" component={Report} />
           <Route path="/404" component={NotFound} />
           <Route component={NotFound} />

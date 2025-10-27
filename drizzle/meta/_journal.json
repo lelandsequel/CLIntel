@@ -15,6 +15,13 @@
       "when": 1761600035009,
       "tag": "0001_cultured_medusa",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1761608040199,
+      "tag": "0002_lying_skrulls",
+      "breakpoints": true
     }
   ]
 }

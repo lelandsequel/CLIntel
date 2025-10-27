@@ -9,12 +9,14 @@ import { trpc } from '@/lib/trpc';
 
 interface FileUploadProps {
   type: 'AIQ' | 'RedIQ';
+  reportId?: number;
+  subjectPropertyName?: string;
   onUploadComplete?: () => void;
 }
 
-export function FileUpload({ type, onUploadComplete }: FileUploadProps) {
+export function FileUpload({ type, reportId, subjectPropertyName: initialSubjectName, onUploadComplete }: FileUploadProps) {
   const [file, setFile] = useState<File | null>(null);
-  const [subjectPropertyName, setSubjectPropertyName] = useState('AVEN Apartments');
+  const [subjectPropertyName, setSubjectPropertyName] = useState(initialSubjectName || 'AVEN Apartments');
   const [isDragging, setIsDragging] = useState(false);
 
   const uploadAIQ = trpc.data.uploadAIQ.useMutation({
@@ -97,12 +99,14 @@ export function FileUpload({ type, onUploadComplete }: FileUploadProps) {
             fileName: file.name,
             fileData: base64Data,
             subjectPropertyName: subjectPropertyName.trim() || undefined,
+            reportId,
           });
         } else {
           await uploadRedIQ.mutateAsync({
             fileName: file.name,
             fileData: base64Data,
             subjectPropertyName: subjectPropertyName.trim(),
+            reportId,
           });
         }
       };

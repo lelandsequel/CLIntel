@@ -37,6 +37,7 @@ export type InsertProperty = typeof properties.$inferInsert;
  */
 export const dataImports = mysqlTable("dataImports", {
   id: int("id").autoincrement().primaryKey(),
+  reportId: int("reportId"), // Link to market report (nullable for backward compatibility)
   importDate: timestamp("importDate").defaultNow().notNull(),
   source: mysqlEnum("source", ["AIQ", "RedIQ"]).notNull(),
   fileName: varchar("fileName", { length: 255 }),
@@ -59,6 +60,7 @@ export type InsertDataImport = typeof dataImports.$inferInsert;
  */
 export const floorPlans = mysqlTable("floorPlans", {
   id: int("id").autoincrement().primaryKey(),
+  reportId: int("reportId"), // Link to market report (nullable for backward compatibility)
   propertyId: int("propertyId").notNull().references(() => properties.id, { onDelete: "cascade" }),
   
   // Basic floor plan information
@@ -142,4 +144,28 @@ export const reports = mysqlTable("reports", {
 
 export type Report = typeof reports.$inferSelect;
 export type InsertReport = typeof reports.$inferInsert;
+
+/**
+ * Market survey reports - groups AIQ + RedIQ uploads into complete reports
+ */
+export const marketReports = mysqlTable("marketReports", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  subjectPropertyName: varchar("subjectPropertyName", { length: 255 }),
+  description: text("description"),
+  status: mysqlEnum("status", ["draft", "complete", "archived"]).default("draft").notNull(),
+  
+  // Track which imports belong to this report
+  aiqImportId: int("aiqImportId").references(() => dataImports.id),
+  rediqImportId: int("rediqImportId").references(() => dataImports.id),
+  
+  // Metadata
+  createdBy: varchar("createdBy", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  completedAt: timestamp("completedAt"),
+});
+
+export type MarketReport = typeof marketReports.$inferSelect;
+export type InsertMarketReport = typeof marketReports.$inferInsert;
 

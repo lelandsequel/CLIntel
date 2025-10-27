@@ -22,16 +22,16 @@ export default function Home() {
             Save hours of manual work with intelligent data processing and beautiful exports.
           </p>
           <div className="flex gap-4 justify-center pt-4">
-            <Link href="/upload">
+            <Link href="/reports">
               <Button size="lg" className="gap-2">
-                <Upload className="h-5 w-5" />
+                <BarChart3 className="h-5 w-5" />
                 Get Started
               </Button>
             </Link>
-            <Link href="/report">
+            <Link href="/reports">
               <Button size="lg" variant="outline" className="gap-2">
-                <BarChart3 className="h-5 w-5" />
-                View Report
+                <FileSpreadsheet className="h-5 w-5" />
+                View Reports
               </Button>
             </Link>
           </div>
@@ -182,10 +182,10 @@ export default function Home() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
-            <Link href="/upload">
+            <Link href="/reports">
               <Button size="lg" variant="secondary" className="gap-2">
-                <Upload className="h-5 w-5" />
-                Upload Data Now
+                <BarChart3 className="h-5 w-5" />
+                Create Report Now
               </Button>
             </Link>
           </CardContent>
