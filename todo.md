@@ -111,3 +111,11 @@
 - [x] Add market insights and intelligence tracking
 - [x] Build comprehensive property analysis system
 
+
+
+## Branding & UI Updates
+- [x] Change application name to "C&L Property"
+- [x] Update homepage language to reflect internal tool (not marketing)
+- [x] Remove sales-focused language throughout the app
+- [ ] Update app title via Settings UI (VITE_APP_TITLE = "C&L Property")
+
