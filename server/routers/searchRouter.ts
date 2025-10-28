@@ -3,6 +3,7 @@ import { publicProcedure, router } from '../_core/trpc';
 import { getDb } from '../db';
 import { propertySearches, searchResults, marketMetrics } from '../../drizzle/schema';
 import { eq, desc, and, gte, lte } from 'drizzle-orm';
+import { executePropertySearch } from '../services/propertySearchService';
 
 export const searchRouter = router({
   /**
@@ -132,12 +133,18 @@ export const searchRouter = router({
         
         const searchConfig = search[0];
         
-        // TODO: Implement actual search logic
-        // For now, we'll create some mock results
-        const mockResults = await generateMockResults(searchConfig);
+        // Execute intelligent property search
+        const foundProperties = await executePropertySearch({
+          geographicArea: searchConfig.geographicArea,
+          propertyClass: searchConfig.propertyClass || 'B- to A+',
+          minUnits: searchConfig.minUnits || 100,
+          maxUnits: searchConfig.maxUnits || undefined,
+          searchDepth: searchConfig.searchDepth,
+          timeframe: searchConfig.timeframe,
+        });
         
         // Insert results into database
-        for (const result of mockResults) {
+        for (const result of foundProperties) {
           await db.insert(searchResults).values({
             searchId: input.searchId,
             ...result,
@@ -149,16 +156,16 @@ export const searchRouter = router({
           .set({
             status: 'completed',
             completedAt: new Date(),
-            totalResults: mockResults.length,
-            immediateOpportunities: mockResults.filter(r => r.urgencyLevel === 'immediate').length,
-            developingOpportunities: mockResults.filter(r => r.urgencyLevel === 'developing').length,
-            futureOpportunities: mockResults.filter(r => r.urgencyLevel === 'future').length,
+            totalResults: foundProperties.length,
+            immediateOpportunities: foundProperties.filter(r => r.urgencyLevel === 'immediate').length,
+            developingOpportunities: foundProperties.filter(r => r.urgencyLevel === 'developing').length,
+            futureOpportunities: foundProperties.filter(r => r.urgencyLevel === 'future').length,
           })
           .where(eq(propertySearches.id, input.searchId));
         
         return {
           success: true,
-          resultsCount: mockResults.length,
+          resultsCount: foundProperties.length,
         };
       } catch (error) {
         // Update search with error status
