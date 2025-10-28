@@ -234,6 +234,7 @@ export const searchResults = mysqlTable("searchResults", {
     "company_distress",
     "off_market"
   ]).notNull(),
+  propertyType: mysqlEnum("propertyType", ["acquisition", "management_target"]).default("acquisition").notNull(),
   urgencyLevel: mysqlEnum("urgencyLevel", ["immediate", "developing", "future"]).notNull(),
   
   // Metrics

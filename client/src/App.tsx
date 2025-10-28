@@ -11,7 +11,9 @@ import Reports from "./pages/Reports";
 import ReportDetail from "./pages/ReportDetail";
 import Properties from "./pages/Properties";
 import PropertyUpload from "./pages/PropertyUpload";
-import { FileSpreadsheet, Upload as UploadIcon, BarChart3, Building2 } from "lucide-react";
+import Acquisitions from "./pages/Acquisitions";
+import ManagementTargets from "./pages/ManagementTargets";
+import { FileSpreadsheet, Upload as UploadIcon, BarChart3, Building2, Target } from "lucide-react";
 import { APP_TITLE } from "./const";
 
 function Router() {
@@ -35,9 +37,13 @@ function Router() {
               <BarChart3 className="h-4 w-4" />
               Reports
             </Link>
-            <Link href="/properties" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+            <Link href="/acquisitions" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
               <Building2 className="h-4 w-4" />
-              Properties
+              Acquisitions
+            </Link>
+            <Link href="/management-targets" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+              <Target className="h-4 w-4" />
+              Management
             </Link>
           </nav>
         </div>
@@ -51,6 +57,8 @@ function Router() {
           <Route path="/report" component={Report} />
           <Route path="/properties" component={Properties} />
           <Route path="/properties/upload" component={PropertyUpload} />
+          <Route path="/acquisitions" component={Acquisitions} />
+          <Route path="/management-targets" component={ManagementTargets} />
           <Route path="/404" component={NotFound} />
           <Route component={NotFound} />
         </Switch>

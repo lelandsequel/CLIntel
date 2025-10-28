@@ -26,6 +26,7 @@ export default function PropertyUpload() {
     yearBuilt: '',
     price: '',
     opportunityType: 'new_listing' as const,
+    propertyType: 'acquisition' as const,
     urgencyLevel: 'developing' as const,
     dataSource: '',
     sourceUrl: '',
@@ -46,6 +47,7 @@ export default function PropertyUpload() {
         yearBuilt: '',
         price: '',
         opportunityType: 'new_listing',
+        propertyType: 'acquisition',
         urgencyLevel: 'developing',
         dataSource: '',
         sourceUrl: '',
@@ -202,6 +204,22 @@ export default function PropertyUpload() {
                       onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                     />
                   </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="propertyType">Property Type</Label>
+                  <Select
+                    value={formData.propertyType}
+                    onValueChange={(value: any) => setFormData({ ...formData, propertyType: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="acquisition">Acquisition Target</SelectItem>
+                      <SelectItem value="management_target">Management Target</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div>

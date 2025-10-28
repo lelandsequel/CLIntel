@@ -1,0 +1,1 @@
+ALTER TABLE `searchResults` ADD `propertyType` enum('acquisition','management_target') DEFAULT 'acquisition' NOT NULL;

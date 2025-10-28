@@ -20,6 +20,7 @@ export const propertiesRouter = router({
       yearBuilt: z.number().optional(),
       price: z.number().optional(),
       opportunityType: z.enum(['new_listing', 'distressed_sale', 'new_construction', 'underperforming', 'company_distress', 'off_market']),
+      propertyType: z.enum(['acquisition', 'management_target']).default('acquisition'),
       urgencyLevel: z.enum(['immediate', 'developing', 'future']),
       dataSource: z.string().optional(),
       sourceUrl: z.string().optional(),
@@ -45,6 +46,7 @@ export const propertiesRouter = router({
         price: input.price,
         pricePerUnit,
         opportunityType: input.opportunityType,
+        propertyType: input.propertyType,
         urgencyLevel: input.urgencyLevel,
         score,
         dataSource: input.dataSource || 'Manual Entry',
@@ -97,6 +99,7 @@ export const propertiesRouter = router({
             price: priceNum,
             pricePerUnit,
             opportunityType: 'new_listing',
+            propertyType: 'acquisition',
             urgencyLevel: 'developing',
             score: 60,
             dataSource: 'Bulk Upload',
@@ -122,13 +125,22 @@ export const propertiesRouter = router({
    * List all manually added properties
    */
   list: publicProcedure
-    .query(async () => {
+    .input(z.object({
+      propertyType: z.enum(['acquisition', 'management_target']).optional(),
+    }).optional())
+    .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error('Database not available');
       
+      const conditions = [sql`${searchResults.searchId} = 0`];
+      
+      if (input?.propertyType) {
+        conditions.push(sql`${searchResults.propertyType} = ${input.propertyType}`);
+      }
+      
       const properties = await db.select()
         .from(searchResults)
-        .where(sql`${searchResults.searchId} = 0`)
+        .where(sql.join(conditions, sql` AND `))
         .orderBy(desc(searchResults.createdAt));
       
       return properties;

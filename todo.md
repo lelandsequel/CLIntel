@@ -154,3 +154,12 @@
 - [x] Allow manual entry of property details
 - [x] Update navigation and home page
 
+
+
+## Property Type Split
+- [x] Add propertyType field (acquisition vs management_target) to database
+- [x] Update upload form to select property type
+- [x] Create separate "Acquisitions" and "Management Targets" pages
+- [x] Update navigation to show both sections
+- [x] Filter properties by type in list views
+
