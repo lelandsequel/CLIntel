@@ -133,23 +133,21 @@ export async function searchMultifamilyProperties(
 function generateSearchQueries(area: string, minUnits: number, opportunityType: string): string[] {
   const baseQueries: Record<string, string[]> = {
     new_listing: [
-      `${area} apartment building for sale ${minUnits}+ units`,
-      `${area} multifamily property for sale`,
-      `${area} apartment complex for sale`,
-      `site:loopnet.com ${area} multifamily`,
-      `site:crexi.com ${area} apartment`,
+      `site:loopnet.com ${area} multifamily for sale`,
+      `site:crexi.com ${area} apartment for sale`,
+      `site:apartments.com ${area} property for sale`,
+      `site:costar.com ${area} multifamily`,
+      `site:ten-x.com ${area} apartment`,
     ],
     new_construction: [
-      `${area} new apartment construction`,
-      `${area} multifamily development project`,
-      `${area} apartment building permit`,
-      `${area} new multifamily construction`,
+      `site:loopnet.com ${area} new construction multifamily`,
+      `site:crexi.com ${area} development opportunity`,
+      `${area} multifamily construction permit site:.gov`,
     ],
     underperforming: [
-      `${area} distressed apartment building`,
-      `${area} value add multifamily`,
-      `${area} apartment building low occupancy`,
-      `${area} multifamily renovation opportunity`,
+      `site:loopnet.com ${area} value add multifamily`,
+      `site:crexi.com ${area} distressed apartment`,
+      `${area} multifamily foreclosure auction`,
     ],
     company_distress: [
       `${area} apartment management company bankruptcy`,
@@ -157,9 +155,9 @@ function generateSearchQueries(area: string, minUnits: number, opportunityType: 
       `${area} apartment owner distressed`,
     ],
     off_market: [
-      `${area} off market multifamily`,
-      `${area} apartment building owner`,
-      `${area} multifamily investment opportunity`,
+      `site:loopnet.com ${area} off market`,
+      `site:crexi.com ${area} pocket listing`,
+      `${area} multifamily owner operator`,
     ],
   };
   

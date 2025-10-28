@@ -24,8 +24,8 @@ export default function Home() {
               <Link href="/reports">
                 <Button variant="ghost">Market Reports</Button>
               </Link>
-              <Link href="/search">
-                <Button variant="ghost">Property Search</Button>
+              <Link href="/properties">
+                <Button variant="ghost">Properties</Button>
               </Link>
             </nav>
           </div>
@@ -49,10 +49,10 @@ export default function Home() {
                 Create Market Report
               </Button>
             </Link>
-            <Link href="/search">
+            <Link href="/properties">
               <Button size="lg" variant="outline" className="gap-2">
                 <Search className="h-5 w-5" />
-                Property Search
+                Properties
               </Button>
             </Link>
           </div>
@@ -97,7 +97,7 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          {/* Property Search */}
+          {/* Properties */}
           <Card>
             <CardHeader>
               <div className="flex items-center gap-3 mb-2">
@@ -241,7 +241,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Property Search Workflow */}
+            {/* Properties Workflow */}
             <div>
               <h4 className="text-xl font-semibold mb-4 flex items-center gap-2">
                 <Search className="h-5 w-5 text-primary" />
@@ -289,10 +289,10 @@ export default function Home() {
                 New Market Report
               </Button>
             </Link>
-            <Link href="/search">
+            <Link href="/properties">
               <Button size="lg" variant="outline" className="gap-2 bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
                 <Search className="h-5 w-5" />
-                Start Property Search
+                Manage Properties
               </Button>
             </Link>
           </div>

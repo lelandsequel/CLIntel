@@ -140,3 +140,17 @@
 - [x] Save raw search results first, then enhance with AI analysis separately
 - [x] Add retry logic for LLM analysis when it fails (returns raw results on failure)
 
+
+
+## Bugs
+- [x] Search returning news articles instead of property listings - updated queries to use site: operator for LoopNet, Crexi, etc.
+
+
+
+## Major Feature Change
+- [x] Remove automated property search feature (DataForSEO + LLM)
+- [x] Add manual property upload interface (paste/upload search results)
+- [x] Create property tracking and management system
+- [x] Allow manual entry of property details
+- [x] Update navigation and home page
+
