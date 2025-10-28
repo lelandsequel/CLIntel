@@ -119,3 +119,11 @@
 - [x] Remove sales-focused language throughout the app
 - [ ] Update app title via Settings UI (VITE_APP_TITLE = "C&L Property")
 
+
+
+## Property Search - Real Data Integration
+- [x] Integrate DataForSEO SERP API for web search results (LoopNet, Crexi, etc.)
+- [x] Add API credentials configuration for DataForSEO
+- [x] Combine SERP data with LLM analysis for property extraction
+- [x] Implement real property search using DataForSEO + LLM
+
