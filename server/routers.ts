@@ -6,6 +6,7 @@ import { dataRouter } from "./routers/dataRouter";
 import { exportRouter } from "./routers/exportRouter";
 import { reportRouter } from "./routers/reportRouter";
 import { searchRouter } from "./routers/searchRouter";
+import { searchExportRouter } from "./routers/searchExportRouter";
 
 export const appRouter = router({
   system: systemRouter,
@@ -13,6 +14,7 @@ export const appRouter = router({
   export: exportRouter,
   reports: reportRouter,
   search: searchRouter,
+  searchExport: searchExportRouter,
 
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

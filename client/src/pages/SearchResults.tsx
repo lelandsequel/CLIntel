@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { 
   ArrowLeft, Building2, MapPin, DollarSign, Users, Calendar, 
   TrendingUp, AlertCircle, Clock, Loader2, ExternalLink,
-  Star, MessageSquare
+  Star, MessageSquare, FileSpreadsheet, Download
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -24,6 +24,47 @@ export default function SearchResults() {
   const updateResult = trpc.search.updateResult.useMutation({
     onSuccess: () => {
       // Refetch to update UI
+    },
+  });
+
+  const exportToExcel = trpc.searchExport.exportToExcel.useMutation({
+    onSuccess: (data) => {
+      // Convert base64 to blob and download
+      const byteCharacters = atob(data.data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = data.filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    },
+  });
+
+  const exportMarketIntelligence = trpc.searchExport.exportMarketIntelligence.useMutation({
+    onSuccess: (data) => {
+      const byteCharacters = atob(data.data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = data.filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
     },
   });
 
@@ -205,8 +246,8 @@ export default function SearchResults() {
               Back to Searches
             </Button>
           </Link>
-          <div className="flex items-start justify-between">
-            <div>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
               <h1 className="text-4xl font-bold tracking-tight">{search.name}</h1>
               <p className="text-lg text-muted-foreground mt-2 flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
@@ -220,11 +261,43 @@ export default function SearchResults() {
                 <span>Timeframe: {search.timeframe}</span>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-3xl font-bold">{search.totalResults}</div>
-              <div className="text-sm text-muted-foreground">Total Opportunities</div>
-              <div className="text-xs text-muted-foreground mt-1">
-                {search.completedAt && formatDistanceToNow(new Date(search.completedAt), { addSuffix: true })}
+            <div className="flex flex-col gap-2">
+              <div className="text-right">
+                <div className="text-3xl font-bold">{search.totalResults}</div>
+                <div className="text-sm text-muted-foreground">Total Opportunities</div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  {search.completedAt && formatDistanceToNow(new Date(search.completedAt), { addSuffix: true })}
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  onClick={() => exportToExcel.mutate({ searchId })}
+                  disabled={exportToExcel.isPending}
+                >
+                  {exportToExcel.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <FileSpreadsheet className="h-4 w-4" />
+                  )}
+                  Export Excel
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  onClick={() => exportMarketIntelligence.mutate({ searchId })}
+                  disabled={exportMarketIntelligence.isPending}
+                >
+                  {exportMarketIntelligence.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
+                  Market Intel
+                </Button>
               </div>
             </div>
           </div>

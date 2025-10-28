@@ -20,6 +20,8 @@ export default function PropertySearch() {
   const [maxUnits, setMaxUnits] = useState('');
   const [searchDepth, setSearchDepth] = useState<'quick' | 'deep'>('quick');
   const [timeframe, setTimeframe] = useState<'24h' | '48h' | '7d' | '30d'>('48h');
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [recurringSchedule, setRecurringSchedule] = useState('daily');
 
   const { data: searches, isLoading, refetch } = trpc.search.list.useQuery();
 
@@ -71,6 +73,8 @@ export default function PropertySearch() {
     setMaxUnits('');
     setSearchDepth('quick');
     setTimeframe('48h');
+    setIsRecurring(false);
+    setRecurringSchedule('daily');
   };
 
   const handleCreateSearch = () => {
@@ -91,6 +95,8 @@ export default function PropertySearch() {
       maxUnits: maxUnits ? parseInt(maxUnits) : undefined,
       searchDepth,
       timeframe,
+      isRecurring,
+      recurringSchedule: isRecurring ? recurringSchedule : undefined,
     });
   };
 

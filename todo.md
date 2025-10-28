@@ -91,18 +91,18 @@
 - [x] Implement property comparison features
 
 ### Phase 8.5: Reporting & Export
-- [ ] Generate formatted search reports (PDF/Excel)
-- [ ] Create market intelligence summary reports
-- [ ] Add opportunity tracking workflow
+- [x] Generate formatted search reports (PDF/Excel)
+- [x] Create market intelligence summary reports
+- [x] Add opportunity tracking workflow
 - [ ] Implement alert system for high-priority matches
 - [ ] Build email notifications for search completion
 
 ### Phase 8.6: Automation & Scheduling
-- [ ] Add recurring search scheduling
-- [ ] Implement automated daily/weekly search execution
-- [ ] Create automated report generation and delivery
-- [ ] Add search result change tracking (new opportunities)
-- [ ] Build alert system for urgent opportunities
+- [x] Add recurring search scheduling
+- [x] Implement automated daily/weekly search execution
+- [x] Create automated report generation and delivery
+- [x] Add search result change tracking (new opportunities)
+- [x] Build alert system for urgent opportunities
 
 ### Phase 8.7: Advanced Features
 - [ ] Add AI-powered property valuation estimates
