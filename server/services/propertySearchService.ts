@@ -3,7 +3,7 @@ import { searchMultifamilyProperties, SerpSearchResult } from './dataForSeoServi
 
 /**
  * Property Search Service
- * Uses DataForSEO SERP API + LLM to find and analyze real multifamily properties
+ * Two-step process: 1) DataForSEO search, 2) LLM analysis (separate)
  */
 
 export interface SearchConfig {
@@ -38,7 +38,8 @@ export interface PropertyResult {
 }
 
 /**
- * Execute property search using DataForSEO + LLM analysis
+ * STEP 1: Execute property search using DataForSEO only
+ * Returns raw search results immediately
  */
 export async function executePropertySearch(config: SearchConfig): Promise<PropertyResult[]> {
   const results: PropertyResult[] = [];
@@ -51,93 +52,120 @@ export async function executePropertySearch(config: SearchConfig): Promise<Prope
     
     for (const oppType of opportunityTypes) {
       try {
-        const properties = await searchPropertiesByType(config, oppType);
+        console.log(`[Search] Searching for ${oppType} in ${config.geographicArea}...`);
+        const searchResults = await searchMultifamilyProperties(
+          config.geographicArea,
+          config.minUnits,
+          oppType
+        );
+        
+        console.log(`[Search] Found ${searchResults.length} results for ${oppType}`);
+        
+        // Convert raw search results to PropertyResult format
+        const properties = searchResults.map((result, idx) => {
+          const score = 50 + (searchResults.length - idx) * 2; // Higher score for top results
+          const urgency: 'immediate' | 'developing' | 'future' = 
+            score >= 70 ? 'immediate' : score >= 50 ? 'developing' : 'future';
+          
+          return {
+            propertyName: result.title,
+            city: config.geographicArea.split(',')[0]?.trim() || 'Unknown',
+            state: config.geographicArea.split(',')[1]?.trim() || config.geographicArea,
+            opportunityType: oppType as any,
+            urgencyLevel: urgency,
+            score,
+            dataSource: result.domain,
+            sourceUrl: result.url,
+            rawData: JSON.stringify(result),
+          } as PropertyResult;
+        });
+        
         results.push(...properties);
       } catch (error) {
-        console.error(`Error searching ${oppType}:`, error);
+        console.error(`[Search] Error searching ${oppType}:`, error);
         // Continue with other types even if one fails
       }
     }
     
+    console.log(`[Search] Total results: ${results.length}`);
     return results;
   } catch (error) {
-    console.error('Error executing property search:', error);
+    console.error('[Search] Error executing property search:', error);
     throw error;
   }
 }
 
 /**
- * Search for properties of a specific opportunity type
+ * STEP 2: Enhance existing search results with LLM analysis
+ * Can be called separately and retried if it fails
  */
-async function searchPropertiesByType(
-  config: SearchConfig,
-  opportunityType: string
+export async function enhanceResultsWithAI(
+  searchResults: PropertyResult[],
+  config: SearchConfig
 ): Promise<PropertyResult[]> {
-  // Step 1: Get search results from DataForSEO
-  const searchResults = await searchMultifamilyProperties(
-    config.geographicArea,
-    config.minUnits,
-    opportunityType
-  );
+  console.log(`[AI Enhancement] Analyzing ${searchResults.length} results...`);
   
-  if (searchResults.length === 0) {
-    return [];
+  const enhanced: PropertyResult[] = [];
+  
+  // Process in batches to avoid overwhelming the LLM
+  const batchSize = 5;
+  for (let i = 0; i < searchResults.length; i += batchSize) {
+    const batch = searchResults.slice(i, i + batchSize);
+    
+    try {
+      const enhancedBatch = await enhanceBatchWithAI(batch, config);
+      enhanced.push(...enhancedBatch);
+    } catch (error) {
+      console.error(`[AI Enhancement] Error enhancing batch ${i / batchSize + 1}:`, error);
+      // Return original results if AI enhancement fails
+      enhanced.push(...batch);
+    }
   }
   
-  // Step 2: Use LLM to extract property details from search results
-  const properties = await extractPropertiesFromSearchResults(
-    searchResults,
-    config,
-    opportunityType
-  );
-  
-  return properties;
+  return enhanced;
 }
 
 /**
- * Use LLM to extract structured property data from search results
+ * Enhance a batch of results with AI analysis
  */
-async function extractPropertiesFromSearchResults(
-  searchResults: SerpSearchResult[],
-  config: SearchConfig,
-  opportunityType: string
+async function enhanceBatchWithAI(
+  results: PropertyResult[],
+  config: SearchConfig
 ): Promise<PropertyResult[]> {
-  // Take top 10 results to avoid overwhelming the LLM
-  const topResults = searchResults.slice(0, 10);
+  const searchContext = results.map((result, idx) => {
+    const rawData = JSON.parse(result.rawData);
+    return `[${idx + 1}] ${result.propertyName}\nURL: ${result.sourceUrl}\nDescription: ${rawData.description || 'N/A'}\n`;
+  }).join('\n');
   
-  const searchContext = topResults.map((result, idx) => 
-    `[${idx + 1}] ${result.title}\nURL: ${result.url}\nDescription: ${result.description}\nDomain: ${result.domain}\n`
-  ).join('\n');
-  
-  const prompt = `Analyze these search results for multifamily properties in ${config.geographicArea} and extract property details.
+  const prompt = `Analyze these multifamily property search results and extract detailed information.
 
 Search Results:
 ${searchContext}
 
-Extract information for each property found. For each property, provide:
-- Property name (from title or description)
-- Location (city, state)
+For each property, try to extract:
+- Property name
+- Location (city, state, zip if available)
 - Number of units (if mentioned)
 - Price (if mentioned, in dollars)
+- Property class/quality
+- Year built (if mentioned)
 - Any other relevant details
 
-Only include properties that appear to be real multifamily/apartment properties (${config.minUnits}+ units). Skip general listings, news articles, or non-property results.
-
-Return as JSON array with extracted properties.`;
+Return as JSON array with extracted details.`;
 
   try {
     const response = await invokeLLM({
       messages: [
         { 
           role: 'system', 
-          content: 'You are a commercial real estate analyst extracting property information from search results. Be conservative - only extract properties you are confident about from the provided data.' 
+          content: 'You are a commercial real estate analyst extracting property information from search results.' 
         },
         { role: 'user', content: prompt }
       ],
       response_format: {
         type: 'json_schema',
         json_schema: {
-          name: 'extracted_properties',
+          name: 'enhanced_properties',
           strict: true,
           schema: {
             type: 'object',
@@ -147,15 +175,14 @@ Return as JSON array with extracted properties.`;
                 items: {
                   type: 'object',
                   properties: {
-                    propertyName: { type: 'string' },
-                    city: { type: 'string' },
-                    state: { type: 'string' },
+                    index: { type: 'number' },
                     units: { type: ['number', 'null'] },
                     price: { type: ['number', 'null'] },
-                    sourceUrl: { type: 'string' },
+                    propertyClass: { type: ['string', 'null'] },
+                    yearBuilt: { type: ['number', 'null'] },
                     notes: { type: 'string' }
                   },
-                  required: ['propertyName', 'city', 'state', 'sourceUrl', 'notes'],
+                  required: ['index', 'notes'],
                   additionalProperties: false
                 }
               }
@@ -169,89 +196,34 @@ Return as JSON array with extracted properties.`;
 
     const content = response.choices[0].message.content;
     if (!content || typeof content !== 'string') {
-      return [];
+      return results; // Return original if parsing fails
     }
     
     const parsed = JSON.parse(content);
-    const properties = parsed.properties || [];
+    const enhancements = parsed.properties || [];
     
-    // Convert to PropertyResult format with scoring
-    return properties.map((prop: any) => {
-      const score = calculateOpportunityScore(prop, opportunityType);
-      const urgency = determineUrgency(prop, score, opportunityType);
-      const pricePerUnit = prop.price && prop.units ? Math.round(prop.price / prop.units) : undefined;
+    // Merge enhancements with original results
+    return results.map((result, idx) => {
+      const enhancement = enhancements.find((e: any) => e.index === idx + 1);
+      if (!enhancement) return result;
       
-      // Find matching search result for data source
-      const matchingResult = searchResults.find(r => r.url === prop.sourceUrl);
-      const dataSource = matchingResult?.domain || 'Web Search';
+      const pricePerUnit = enhancement.price && enhancement.units 
+        ? Math.round(enhancement.price / enhancement.units) 
+        : undefined;
       
       return {
-        propertyName: prop.propertyName,
-        city: prop.city,
-        state: prop.state,
-        units: prop.units || undefined,
-        price: prop.price || undefined,
-        pricePerUnit,
-        opportunityType: opportunityType as any,
-        urgencyLevel: urgency,
-        score,
-        dataSource,
-        sourceUrl: prop.sourceUrl,
-        rawData: JSON.stringify({ ...prop, searchResult: matchingResult }),
-      } as PropertyResult;
+        ...result,
+        units: enhancement.units || result.units,
+        price: enhancement.price || result.price,
+        pricePerUnit: pricePerUnit || result.pricePerUnit,
+        propertyClass: enhancement.propertyClass || result.propertyClass,
+        yearBuilt: enhancement.yearBuilt || result.yearBuilt,
+      };
     });
   } catch (error) {
-    console.error('Error extracting properties from search results:', error);
-    return [];
+    console.error('[AI Enhancement] LLM analysis failed:', error);
+    // Return original results if AI fails
+    return results;
   }
-}
-
-/**
- * Calculate opportunity score based on various factors
- */
-function calculateOpportunityScore(property: any, type: string): number {
-  let score = 50; // Base score
-  
-  // Adjust based on opportunity type
-  const typeScores: Record<string, number> = {
-    'new_listing': 10,
-    'distressed_sale': 20,
-    'new_construction': 5,
-    'underperforming': 25,
-    'company_distress': 30,
-    'off_market': 15,
-  };
-  score += typeScores[type] || 0;
-  
-  // Bonus for having price data
-  if (property.price) score += 10;
-  
-  // Bonus for having unit count
-  if (property.units) score += 10;
-  
-  // Bonus for price per unit in reasonable range
-  if (property.price && property.units) {
-    const ppu = property.price / property.units;
-    if (ppu < 200000) score += 15; // Good value
-  }
-  
-  // Ensure score is within 0-100 range
-  return Math.min(100, Math.max(0, score));
-}
-
-/**
- * Determine urgency level based on property characteristics and score
- */
-function determineUrgency(property: any, score: number, type: string): 'immediate' | 'developing' | 'future' {
-  // Immediate: High score + certain opportunity types
-  if (score >= 75) return 'immediate';
-  if (type === 'distressed_sale' || type === 'company_distress') return 'immediate';
-  
-  // Developing: Medium score or development opportunities
-  if (score >= 50) return 'developing';
-  if (type === 'new_construction') return 'developing';
-  
-  // Future: Lower score or longer-term opportunities
-  return 'future';
 }
 

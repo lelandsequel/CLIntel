@@ -108,7 +108,11 @@ export const searchRouter = router({
     .input(z.object({
       searchId: z.number(),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      // Set longer timeout for property search (5 minutes)
+      if (ctx.res && !ctx.res.headersSent) {
+        ctx.res.setTimeout(300000); // 5 minutes
+      }
       const db = await getDb();
       if (!db) throw new Error('Database not available');
       

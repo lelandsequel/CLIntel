@@ -127,3 +127,16 @@
 - [x] Combine SERP data with LLM analysis for property extraction
 - [x] Implement real property search using DataForSEO + LLM
 
+
+
+## Bugs
+- [x] Property search returning 0 results - DataForSEO working but LLM analysis failing with 500 errors
+- [x] LLM service returning 500 errors - added fallback to return raw search results
+
+
+
+## Enhancements
+- [x] Separate DataForSEO search from LLM analysis into two-step process
+- [x] Save raw search results first, then enhance with AI analysis separately
+- [x] Add retry logic for LLM analysis when it fails (returns raw results on failure)
+

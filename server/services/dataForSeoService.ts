@@ -38,8 +38,14 @@ export interface SerpSearchResult {
  * Search Google using DataForSEO SERP API
  */
 export async function searchGoogle(query: string, location: string = 'United States'): Promise<SerpSearchResult[]> {
+  console.log('[DataForSEO] Starting search:', { query, location });
   try {
-    const response = await fetch(`${DATAFORSEO_API_URL}/serp/google/organic/live/advanced`, {
+    const credentials = getCredentials();
+    console.log('[DataForSEO] Credentials loaded:', { login: credentials.login, hasPassword: !!credentials.password });
+    const url = `${DATAFORSEO_API_URL}/serp/google/organic/live/advanced`;
+    console.log('[DataForSEO] Making API request to:', url);
+    
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Authorization': getAuthHeader(),
@@ -47,10 +53,9 @@ export async function searchGoogle(query: string, location: string = 'United Sta
       },
       body: JSON.stringify([{
         keyword: query,
-        location_name: location,
+        location_code: 2840, // United States
         language_code: 'en',
         device: 'desktop',
-        os: 'windows',
         depth: 20, // Get top 20 results
       }]),
     });
@@ -61,6 +66,7 @@ export async function searchGoogle(query: string, location: string = 'United Sta
     }
 
     const data = await response.json();
+    console.log('[DataForSEO] API response:', JSON.stringify(data, null, 2));
     
     if (!data.tasks || data.tasks.length === 0) {
       return [];
@@ -82,7 +88,10 @@ export async function searchGoogle(query: string, location: string = 'United Sta
         domain: item.domain || '',
       }));
   } catch (error) {
-    console.error('Error searching Google via DataForSEO:', error);
+    console.error('[DataForSEO] Error searching Google:', error);
+    if (error instanceof Error) {
+      console.error('[DataForSEO] Error details:', error.message, error.stack);
+    }
     throw error;
   }
 }
