@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { 
   ArrowLeft, Building2, MapPin, DollarSign, Users, Calendar, 
   TrendingUp, AlertCircle, Clock, Loader2, ExternalLink,
-  Star, MessageSquare, FileSpreadsheet, Download
+  Star, MessageSquare, FileSpreadsheet, Download, Sparkles
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -65,6 +65,15 @@ export default function SearchResults() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+    },
+  });
+
+  const [analysisResultId, setAnalysisResultId] = useState<number | null>(null);
+  const [showAnalysis, setShowAnalysis] = useState(false);
+
+  const comprehensiveAnalysis = trpc.analysis.generateComprehensive.useMutation({
+    onSuccess: () => {
+      setShowAnalysis(true);
     },
   });
 
