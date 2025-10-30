@@ -238,3 +238,11 @@
 - [x] Update app title and branding to show "a product of C&L Strategy"
 - [x] Push code to GitHub repository: https://github.com/lelandsequel/CLIntel
 
+
+
+## Documentation and Authentication
+- [x] Create comprehensive README.md for GitHub repository
+- [x] Create user instruction guide for app features
+- [x] Set up login screen/authentication (AuthGuard component)
+- [x] Add authorized users: leland@candlstrategy.com and jon.tullo@liveamc.com
+

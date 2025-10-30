@@ -16,6 +16,7 @@ import ManagementTargets from "./pages/ManagementTargets";
 import PropertyDetail from "./pages/PropertyDetail";
 import { FileSpreadsheet, Upload as UploadIcon, BarChart3, Building2, Target } from "lucide-react";
 import { APP_TITLE } from "./const";
+import AuthGuard from "./components/AuthGuard";
 
 function Router() {
   return (
@@ -83,7 +84,9 @@ function App() {
       >
         <TooltipProvider>
           <Toaster />
-          <Router />
+          <AuthGuard>
+            <Router />
+          </AuthGuard>
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

@@ -1,239 +1,385 @@
-# Real Estate Data Consolidation Tool - User Guide
+# C&L Intel User Guide
 
-## Overview
+**A product of C&L Strategy**
 
-The Real Estate Data Consolidation Tool automates the process of consolidating ApartmentIQ and RedIQ market survey data into client-ready reports. This tool eliminates manual data entry, reduces errors, and saves hours of work.
-
-## Key Features
-
-### 🚀 Smart Data Ingestion
-- **Drag-and-drop file upload** for both AIQ and RedIQ Excel files
-- **Automatic validation** ensures correct file format and structure
-- **Real-time processing** with progress tracking
-- **Import history** shows all past uploads with status
-
-### 📊 Consolidated Reports
-- **Unified data view** combining AIQ competitor data with RedIQ subject data
-- **Subject property highlighting** with visual distinction (blue background)
-- **Sortable columns** - click any column header to sort
-- **Calculated metrics** including Rent PSF automatically computed
-- **Data source indicators** showing whether data comes from AIQ or RedIQ
-
-### 📤 Client-Ready Exports
-- **Excel export** with professional formatting and summary tables
-- **Multiple sheets** including main data and subject property summary
-- **Automatic calculations** for totals and averages
-- **Download-ready files** named with current date
-
-## How to Use
-
-### Step 1: Upload Your Data Files
-
-1. Navigate to the **Upload** page
-2. Upload your files in this order:
-   - **ApartmentIQ File**: Contains competitor property data
-     - Must have "Floor Plan Data" tab
-     - Columns A-F, N-O will be extracted
-   - **RedIQ File**: Contains subject property data
-     - Must have "Floor Plan Summary" tab
-     - Columns A, D-G, P, S will be extracted
-     - Enter the subject property name (e.g., "AVEN Apartments")
-
-3. The system will:
-   - Validate file structure
-   - Parse the data
-   - Store it in the database
-   - Show success message with record count
-
-### Step 2: View the Consolidated Report
-
-1. Navigate to the **Report** page
-2. You'll see a table with all data combined:
-   - **Subject property rows** are highlighted in blue
-   - **Competitor property rows** appear in standard format
-   - All columns are sortable by clicking the header
-
-### Step 3: Export for Clients
-
-1. On the Report page, click **Export Excel**
-2. The system generates:
-   - **Market Survey sheet**: All consolidated data
-   - **Summary sheet**: Subject property rollup with:
-     - Floor plan breakdown
-     - Total units
-     - Average rent PSF
-     - Other key metrics
-
-3. The file downloads automatically with a timestamped name
-
-## Data Logic
-
-### Subject vs Competitor Data
-
-The tool follows this logic:
-
-- **For Subject Property**: Always use RedIQ data (more accurate, actual property data)
-- **For Competitor Properties**: Use ApartmentIQ data (web-scraped advertised rates)
-
-This means:
-- RedIQ data replaces AIQ data for the subject property only
-- The subject property appears with both:
-  - **Market Rent**: From RedIQ (advertised rates)
-  - **AMC Rent**: From RedIQ (in-place/actual rents)
-- Competitor properties show only AIQ data
-
-### Column Mapping
-
-| Output Column | AIQ Source | RedIQ Source |
-|--------------|------------|--------------|
-| Property | Column A | Subject name (user input) |
-| Floor Plan | Column B | Column A |
-| Bed | Column C | Column D |
-| Bath | Column D | Column E |
-| Sq Ft | Column E | Column F |
-| Units | Column F | Column G |
-| Market Rent | Column O | Column P |
-| AMC Rent | - | Column Q (In-Place Rent) |
-| Last 5 Leases | - | Column S |
-| Rent PSF | Calculated | Calculated |
-
-### Calculated Fields
-
-- **Rent PSF** = Market Rent ÷ Square Feet
-- Automatically computed for all floor plans
-
-## File Requirements
-
-### ApartmentIQ File Format
-
-- **File type**: Excel (.xlsx or .xls)
-- **Required sheet**: "Floor Plan Data" (or similar name containing "floor", "plan", "data")
-- **Required columns**:
-  - A: Property name
-  - B: Floor plan name
-  - C: Bedroom count
-  - D: Bathroom count
-  - E: Square footage
-  - F: Total units
-  - N: Available units
-  - O: Available asking rent
-
-### RedIQ File Format
-
-- **File type**: Excel (.xlsx or .xls)
-- **Required sheet**: "Floor Plan Summary" (or similar name containing "floor", "plan", "summary")
-- **Required columns**:
-  - A: Floor plan name
-  - D: Bedroom count
-  - E: Bathroom count
-  - F: Net square footage
-  - G: Number of units
-  - P: Market rent
-  - Q: In-place rent (used as AMC Rent)
-  - S: Last 5 leases or other data
-
-## Troubleshooting
-
-### Upload Fails
-
-**Problem**: File upload shows error message
-
-**Solutions**:
-- Verify the file is in Excel format (.xlsx or .xls)
-- Check that the required sheet exists with correct name
-- Ensure the file isn't corrupted
-- Try re-downloading the file from the source system
-
-### Missing Data in Report
-
-**Problem**: Some properties or floor plans don't appear
-
-**Solutions**:
-- Check that the data exists in the source file
-- Verify the property name matches exactly (case-sensitive)
-- Look at the Import History to see if there were failed records
-- Re-upload the file if needed
-
-### Subject Property Not Highlighted
-
-**Problem**: Subject property appears like other properties
-
-**Solutions**:
-- Ensure you entered the correct subject property name when uploading RedIQ file
-- Name must match exactly (including spaces and capitalization)
-- Re-upload the RedIQ file with the correct name
-
-### Export Doesn't Include All Data
-
-**Problem**: Excel export is missing some records
-
-**Solutions**:
-- Refresh the Report page to ensure latest data is loaded
-- Check that all uploads completed successfully
-- Verify no filters are applied (future feature)
-
-## Tips for Best Results
-
-1. **Upload RedIQ first**: This creates the subject property in the system
-2. **Use consistent naming**: Ensure property names match exactly across systems
-3. **Check import history**: Always verify successful import before proceeding
-4. **Review before exporting**: Check the Report page to ensure data looks correct
-5. **Keep source files**: Save original AIQ and RedIQ files for reference
-
-## Data Storage
-
-- All uploaded data is stored securely in the database
-- You can re-upload files to update data
-- Import history tracks all uploads with timestamps
-- Previous data is not automatically deleted (allows historical tracking)
-
-## Future Enhancements
-
-Planned features for future releases:
-
-- **PDF Export**: Generate PDF reports with custom formatting
-- **CoStar Integration**: Add CoStar data alongside AIQ
-- **Manual Entry**: Edit Broker Rent and AMC Rent columns directly in the UI
-- **Filters**: Filter report by property, floor plan, or other criteria
-- **Custom Reports**: Save report configurations for reuse
-- **Batch Operations**: Upload multiple files at once
-- **Data Comparison**: Compare current vs historical data
-
-## Support
-
-For questions or issues:
-
-1. Check this user guide first
-2. Review the Import History for error messages
-3. Verify file format matches requirements
-4. Contact your system administrator
-
-## Technical Details
-
-### Technology Stack
-
-- **Frontend**: React 19 + TypeScript + Tailwind CSS
-- **Backend**: Express + tRPC + Node.js
-- **Database**: MySQL/TiDB with Drizzle ORM
-- **Excel Processing**: XLSX library
-- **File Handling**: Base64 encoding for secure transmission
-
-### Browser Compatibility
-
-- Chrome/Edge (recommended)
-- Firefox
-- Safari
-- Modern browsers with ES2020+ support
-
-### Performance
-
-- Handles files up to 10MB
-- Processes 500+ rows in under 5 seconds
-- Real-time updates via tRPC
-- Optimized database queries
+Welcome to C&L Intel! This guide will help you navigate the platform and make the most of its features for tracking multifamily acquisition and management opportunities.
 
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: 2025-10-27
+## Table of Contents
+
+1. [Getting Started](#getting-started)
+2. [Importing Properties](#importing-properties)
+3. [Managing Acquisition Targets](#managing-acquisition-targets)
+4. [Managing Management Targets](#managing-management-targets)
+5. [Property Details](#property-details)
+6. [Document Management](#document-management)
+7. [Best Practices](#best-practices)
+
+---
+
+## Getting Started
+
+### Accessing the Platform
+
+1. Navigate to your C&L Intel URL
+2. Log in with your authorized email address
+3. You'll land on the **Home** page with an overview of the platform
+
+### Navigation
+
+The main navigation bar at the top provides access to:
+
+- **Home**: Platform overview and quick actions
+- **Upload**: Import or manually add properties
+- **Reports**: Market survey data and consolidated reporting (coming soon)
+- **Acquisitions**: View all acquisition target properties
+- **Management**: View all management target properties
+
+---
+
+## Importing Properties
+
+C&L Intel offers two methods for adding properties to the system.
+
+### Method 1: Text File Import (Recommended for Bulk Data)
+
+The text file converter automatically parses formatted .txt files and extracts property data.
+
+**Steps:**
+
+1. **Prepare Your Text File**
+   
+   Format your properties like this:
+   ```
+   Adenine Apartments - Houston (1755 Wyndale Street)
+   265 units (2016)
+   $42 M mortgage via Prime Finance Partners
+   October 2025 auction
+   
+   Forced Sale/Distressed Pricing: Only 2 years after purchase
+   Modern Asset (2016 Build): Newer construction means minimal maintenance
+   Strong Houston Submarket: Quality assets will recover first
+   ```
+
+2. **Navigate to Import**
+   - Go to **Acquisitions** or **Management** page
+   - Click the **"Import Text File"** button (top right)
+
+3. **Upload Your File**
+   - Drag and drop your .txt file into the upload area
+   - Or click the area to browse and select your file
+
+4. **Review Parsed Data**
+   - The system will automatically parse your file
+   - You'll see a preview of all properties found
+   - Each property shows: name, location, units, debt amount, urgency level
+   - Properties with foreclosure status are highlighted in red
+
+5. **Upload Properties**
+   - Review the parsed data for accuracy
+   - Click **"Upload X Properties"** to import them all at once
+   - You'll see a success message when complete
+
+**Supported Data Fields:**
+- Property name and location
+- Units and year built
+- Debt amount and lender
+- Current owner
+- Foreclosure status
+- Buy rationale (investment thesis)
+- Urgency level (immediate/developing/future)
+
+### Method 2: Manual Entry (For Individual Properties)
+
+Use manual entry when you have a single property or need precise control over data entry.
+
+**Steps:**
+
+1. **Navigate to Upload Page**
+   - Click **Upload** in the main navigation
+   - Or click **"Add Properties"** from Acquisitions/Management pages
+
+2. **Open Manual Entry Form**
+   - Click **"Add Property Manually"** button
+   - The form will expand below
+
+3. **Fill in Property Details**
+
+   **Required Fields:**
+   - Property Name
+   - City
+   - State
+
+   **Recommended Fields:**
+   - Units
+   - Price
+   - Property Type (Acquisition Target / Management Target)
+   - Opportunity Type (New Listing, Distressed Sale, etc.)
+   - Urgency Level (Immediate, Developing, Future)
+
+   **Multifamily Acquisition Fields:**
+   - Debt Amount (e.g., "42000000" or "$42M")
+   - Current Owner
+   - Lender
+   - Foreclosure Status (e.g., "October 2025 auction")
+   - Buy Rationale (one reason per line)
+
+4. **Submit the Property**
+   - Click **"Add Property"** at the bottom
+   - You'll be redirected to the property list page
+
+---
+
+## Managing Acquisition Targets
+
+The **Acquisitions** page displays all properties identified for potential acquisition.
+
+### Viewing Acquisition Targets
+
+**Page Layout:**
+- Properties are displayed as cards
+- Each card shows key metrics and urgency level
+- Red "immediate" badge = act within days
+- Yellow "developing" badge = monitor over 1-3 months
+- Blue "future" badge = track for 1-2 months
+
+**Property Card Information:**
+- Property name and location
+- Units, Price, Price/Unit, Year Built
+- Debt Amount, Current Owner, Lender
+- Foreclosure Status (highlighted in red)
+- Buy Rationale with investment thesis points
+- Data source and opportunity type badges
+
+### Filtering and Sorting
+
+- Properties are automatically organized by urgency level
+- Use the import button to add more properties
+- Click any property card to view full details
+
+### Deleting Properties
+
+- Click the trash icon (🗑️) in the top-right of any property card
+- Confirm the deletion
+- The property will be removed from the system
+
+---
+
+## Managing Management Targets
+
+The **Management** page displays properties ripe for management company replacement.
+
+### Understanding Management Targets
+
+These are properties where:
+- Current management is underperforming
+- Owner is in distress or facing foreclosure
+- Operational issues present takeover opportunities
+- Property has deferred maintenance or low occupancy
+
+### Page Features
+
+Same as Acquisitions page, with focus on:
+- Distress signals (CMBS special servicing, code violations, etc.)
+- Why the property is ripe for management change
+- Evidence of mismanagement or operational problems
+
+---
+
+## Property Details
+
+Click any property card to view comprehensive details.
+
+### Overview Tab
+
+**Property Details Card:**
+- Units, Year Built, Property Class
+- Occupancy Rate
+- Current Owner
+- Foreclosure Status
+
+**Financial Details Card:**
+- Price and Price per Unit
+- Debt Amount
+- Lender
+- Cap Rate
+- Opportunity Score (0-100)
+
+**Buy Rationale Section:**
+- Investment thesis with detailed reasoning
+- Multiple supporting points
+- Market analysis and opportunity drivers
+
+**Notes Section:**
+- Additional observations
+- Internal team notes
+- Follow-up actions
+
+**Timeline:**
+- Date added to system
+- Last updated timestamp
+
+### Documents Tab
+
+Upload and manage property-related documents.
+
+**Document Types:**
+- Offering Memo
+- Financials
+- Inspection Report
+- Photos
+- Contract
+- Other
+
+**Features:**
+- Drag-and-drop file upload
+- Document descriptions
+- Download documents
+- Delete documents
+- View upload date and file size
+
+### Notes Tab
+
+(Coming soon) Add and manage property-specific notes and team communications.
+
+---
+
+## Document Management
+
+### Uploading Documents
+
+1. **Open Property Details**
+   - Click on a property card
+   - Navigate to the **Documents** tab
+
+2. **Select Document Type**
+   - Choose from dropdown: Offering Memo, Financials, Inspection, Photos, Contract, Other
+
+3. **Upload File**
+   - Drag and drop your file into the upload area
+   - Or click to browse and select
+   - Supported formats: PDF, Word, Excel, Images, etc.
+
+4. **Add Description (Optional)**
+   - Provide context about the document
+   - Note any important details
+
+5. **Submit**
+   - Click **"Upload Document"**
+   - Document will appear in the list below
+
+### Managing Documents
+
+**Download:**
+- Click the document name or download icon
+- File will download to your computer
+
+**Delete:**
+- Click the trash icon next to the document
+- Confirm deletion
+- Document will be permanently removed
+
+**View Details:**
+- See upload date
+- View file size
+- Read description
+
+---
+
+## Best Practices
+
+### Data Entry
+
+1. **Use Text File Import for Bulk Data**
+   - Faster than manual entry
+   - Automatically parses complex data
+   - Maintains consistency
+
+2. **Include Buy Rationale**
+   - Explain why the property is an opportunity
+   - List multiple supporting points
+   - Include market context
+
+3. **Set Urgency Levels Accurately**
+   - **Immediate**: Act within days (foreclosure auctions, motivated sellers)
+   - **Developing**: Monitor over 1-3 months (CMBS special servicing, code issues)
+   - **Future**: Track for 1-2 months (repeat foreclosure notices)
+
+4. **Track Data Sources**
+   - Note where you found the property (The Real Deal, Multifamily Dive, etc.)
+   - Include source URLs when available
+
+### Document Organization
+
+1. **Upload Key Documents Immediately**
+   - Offering memos
+   - Financial statements
+   - Property photos
+
+2. **Use Descriptive Names**
+   - Add context in the description field
+   - Note date of document if relevant
+
+3. **Keep Documents Current**
+   - Delete outdated information
+   - Upload updated financials when available
+
+### Property Tracking
+
+1. **Review Immediate Opportunities Daily**
+   - Check for auction dates
+   - Monitor foreclosure status changes
+
+2. **Update Property Status**
+   - Mark properties as acquired or passed
+   - Add notes about decisions
+
+3. **Share with Team**
+   - Use the platform as single source of truth
+   - All team members see the same data
+
+---
+
+## Troubleshooting
+
+### Text File Import Issues
+
+**Problem:** "No properties found in file"
+
+**Solution:**
+- Check file format matches the example
+- Ensure property name includes city and state
+- Verify file is .txt format (not .doc or .pdf)
+
+**Problem:** Some fields not parsing correctly
+
+**Solution:**
+- Use consistent formatting
+- Include keywords: "units", "mortgage", "foreclosure"
+- Put buy rationale on separate lines
+
+### Upload Issues
+
+**Problem:** File upload fails
+
+**Solution:**
+- Check file size (max 10MB)
+- Ensure stable internet connection
+- Try a different file format
+
+---
+
+## Getting Help
+
+For questions or support:
+- Email: leland@candlstrategy.com
+- Include screenshots if reporting an issue
+- Describe what you were trying to do when the problem occurred
+
+---
+
+**Happy Property Hunting! 🏢**
+
+*C&L Intel - A product of C&L Strategy*
 

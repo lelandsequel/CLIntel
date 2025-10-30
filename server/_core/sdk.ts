@@ -292,6 +292,17 @@ class SDKServer {
       throw ForbiddenError("User not found");
     }
 
+    // Email whitelist authorization
+    const AUTHORIZED_EMAILS = [
+      "leland@candlstrategy.com",
+      "jon.tullo@liveamc.com"
+    ];
+    
+    if (user.email && !AUTHORIZED_EMAILS.includes(user.email.toLowerCase())) {
+      console.warn(`[Auth] Unauthorized email attempt: ${user.email}`);
+      throw ForbiddenError("You are not authorized to access this application. Please contact leland@candlstrategy.com for access.");
+    }
+
     await db.upsertUser({
       openId: user.openId,
       lastSignedIn: signedInAt,
