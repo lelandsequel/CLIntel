@@ -16,8 +16,8 @@ export default function Home() {
             <div className="flex items-center gap-3">
               <Building2 className="h-8 w-8 text-primary" />
               <div>
-                <h1 className="text-2xl font-bold">C&L Property</h1>
-                <p className="text-sm text-muted-foreground">Data Consolidation & Intelligence Platform</p>
+                <h1 className="text-2xl font-bold">C&L Intel</h1>
+                <p className="text-sm text-muted-foreground">A product of C&L Strategy</p>
               </div>
             </div>
             <nav className="flex gap-4">
