@@ -3,10 +3,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { trpc } from '@/lib/trpc';
-import { Plus, ExternalLink, Trash2, Building2 } from 'lucide-react';
+import { Plus, ExternalLink, Trash2, Building2, FileText } from 'lucide-react';
+import { TextFileConverter } from '../components/TextFileConverter';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 export default function ManagementTargets() {
+  const [showFileConverter, setShowFileConverter] = useState(false);
   const { data: properties, isLoading, refetch } = trpc.properties.list.useQuery({ propertyType: 'management_target' });
   const deleteProperty = trpc.properties.delete.useMutation({
     onSuccess: () => {
@@ -53,13 +56,44 @@ export default function ManagementTargets() {
             Properties identified for potential management
           </div>
         </div>
-        <Link href="/properties/upload">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Properties
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setShowFileConverter(!showFileConverter)}>
+            <FileText className="mr-2 h-4 w-4" />
+            Import Text File
           </Button>
-        </Link>
+          <Link href="/properties/upload">
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Properties
+            </Button>
+          </Link>
+        </div>
       </div>
+
+      {showFileConverter && (
+        <Card className="mb-6">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Import from Text File</CardTitle>
+              <Button variant="ghost" size="sm" onClick={() => setShowFileConverter(false)}>
+                ×
+              </Button>
+            </div>
+            <CardDescription>
+              Upload a .txt file with property data to automatically parse and import
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <TextFileConverter
+              propertyType="management_target"
+              onUploadComplete={() => {
+                setShowFileConverter(false);
+                refetch();
+              }}
+            />
+          </CardContent>
+        </Card>
+      )}
 
       {!properties || properties.length === 0 ? (
         <Card>

@@ -220,3 +220,14 @@
 - [x] Test manual entry with all multifamily fields (form working correctly)
 - [x] Test document upload functionality (Documents tab working)
 
+
+
+
+## Text File to Property Data Converter
+- [x] Build drag-and-drop file converter component for txt files
+- [x] Parse structured text format (property name, units, debt, owner, lender, foreclosure status, buy rationale)
+- [x] Add converter to both Acquisitions and Management Targets pages
+- [x] Convert parsed data to proper format for bulk upload API
+- [x] Show preview of parsed properties before upload
+- [x] Handle errors and validation for malformed text files
+
