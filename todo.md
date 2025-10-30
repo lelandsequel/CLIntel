@@ -163,3 +163,32 @@
 - [x] Update navigation to show both sections
 - [x] Filter properties by type in list views
 
+
+
+## Acquisition Tracking Fields
+- [ ] Add purchase price field (offered/accepted)
+- [ ] Add closing date field (expected and actual)
+- [ ] Add funding status field (pending/approved/secured/closed)
+- [ ] Add LOI (Letter of Intent) date and status
+- [ ] Add due diligence period dates
+- [ ] Add earnest money deposit amount
+- [ ] Add financing details (loan amount, lender, rate)
+- [ ] Add acquisition status (pipeline/under_contract/closed/lost)
+- [ ] Add key contacts (broker, seller, lender)
+- [ ] Add notes/comments field for deal updates
+- [ ] Update database schema with acquisition fields
+- [ ] Update upload form to include acquisition fields
+- [ ] Update Acquisitions page to display new fields
+
+
+
+## Property Document Upload
+- [x] Create propertyDocuments table to store uploaded files
+- [x] Add file upload component for properties
+- [x] Support multiple document types (PDF, Excel, Word, images)
+- [x] Add document categories (offering memo, financials, inspections, photos, contracts, etc.)
+- [x] Store files in S3 storage
+- [x] Display uploaded documents on property detail pages
+- [x] Add document download functionality
+- [x] Add document deletion capability
+

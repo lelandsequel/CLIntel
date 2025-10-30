@@ -80,7 +80,8 @@ export default function ManagementTargets() {
       ) : (
         <div className="grid gap-4">
           {properties.map((property) => (
-            <Card key={property.id}>
+            <Link href={`/properties/${property.id}`} key={property.id}>
+              <Card className="cursor-pointer hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -157,6 +158,7 @@ export default function ManagementTargets() {
                 </div>
               </CardContent>
             </Card>
+            </Link>
           ))}
         </div>
       )}

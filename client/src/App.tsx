@@ -13,6 +13,7 @@ import Properties from "./pages/Properties";
 import PropertyUpload from "./pages/PropertyUpload";
 import Acquisitions from "./pages/Acquisitions";
 import ManagementTargets from "./pages/ManagementTargets";
+import PropertyDetail from "./pages/PropertyDetail";
 import { FileSpreadsheet, Upload as UploadIcon, BarChart3, Building2, Target } from "lucide-react";
 import { APP_TITLE } from "./const";
 
@@ -59,6 +60,7 @@ function Router() {
           <Route path="/properties/upload" component={PropertyUpload} />
           <Route path="/acquisitions" component={Acquisitions} />
           <Route path="/management-targets" component={ManagementTargets} />
+          <Route path="/properties/:id" component={PropertyDetail} />
           <Route path="/404" component={NotFound} />
           <Route component={NotFound} />
         </Switch>

@@ -262,6 +262,48 @@ export type SearchResult = typeof searchResults.$inferSelect;
 export type InsertSearchResult = typeof searchResults.$inferInsert;
 
 /**
+ * Property documents table - stores uploaded files for properties
+ */
+export const propertyDocuments = mysqlTable("propertyDocuments", {
+  id: int("id").autoincrement().primaryKey(),
+  propertyId: int("propertyId").notNull(), // FK to searchResults
+  
+  // Document metadata
+  fileName: varchar("fileName", { length: 255 }).notNull(),
+  originalFileName: varchar("originalFileName", { length: 255 }).notNull(),
+  fileSize: int("fileSize").notNull(), // in bytes
+  mimeType: varchar("mimeType", { length: 100 }).notNull(),
+  
+  // Document classification
+  documentType: mysqlEnum("documentType", [
+    "offering_memo",
+    "financial_statement",
+    "inspection_report",
+    "appraisal",
+    "contract",
+    "loi",
+    "photo",
+    "market_analysis",
+    "other"
+  ]).notNull(),
+  documentCategory: varchar("documentCategory", { length: 100 }), // Custom category
+  
+  // Storage
+  fileKey: varchar("fileKey", { length: 500 }).notNull(), // S3 key
+  fileUrl: varchar("fileUrl", { length: 500 }).notNull(), // S3 URL
+  
+  // Metadata
+  description: text("description"),
+  uploadedBy: varchar("uploadedBy", { length: 255 }),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PropertyDocument = typeof propertyDocuments.$inferSelect;
+export type InsertPropertyDocument = typeof propertyDocuments.$inferInsert;
+
+/**
  * Market metrics - tracking key market indicators over time
  */
 export const marketMetrics = mysqlTable("marketMetrics", {
