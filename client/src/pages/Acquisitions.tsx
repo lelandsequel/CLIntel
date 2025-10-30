@@ -81,7 +81,7 @@ export default function Acquisitions() {
         <div className="grid gap-4">
           {properties.map((property) => (
             <Link href={`/properties/${property.id}`} key={property.id}>
-              <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -133,6 +133,44 @@ export default function Acquisitions() {
                     </div>
                   )}
                 </div>
+
+                {/* Multifamily Acquisition Details */}
+                {(property.debtAmount || property.currentOwner || property.lender || property.foreclosureStatus) && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4 p-3 bg-muted/50 rounded-lg">
+                    {property.debtAmount && (
+                      <div>
+                        <div className="text-sm text-muted-foreground">Debt Amount</div>
+                        <div className="font-medium">{property.debtAmount}</div>
+                      </div>
+                    )}
+                    {property.currentOwner && (
+                      <div>
+                        <div className="text-sm text-muted-foreground">Current Owner</div>
+                        <div className="font-medium">{property.currentOwner}</div>
+                      </div>
+                    )}
+                    {property.lender && (
+                      <div>
+                        <div className="text-sm text-muted-foreground">Lender</div>
+                        <div className="font-medium">{property.lender}</div>
+                      </div>
+                    )}
+                    {property.foreclosureStatus && (
+                      <div>
+                        <div className="text-sm text-muted-foreground">Foreclosure Status</div>
+                        <div className="font-medium text-red-600">{property.foreclosureStatus}</div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Buy Rationale */}
+                {property.buyRationale && (
+                  <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                    <div className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">Buy Rationale</div>
+                    <div className="text-sm text-blue-800 dark:text-blue-200 whitespace-pre-line">{property.buyRationale}</div>
+                  </div>
+                )}
 
                 <div className="flex items-center gap-2 flex-wrap">
                   <Badge variant="secondary">

@@ -1,0 +1,8 @@
+{
+  "query": "INSERT INTO searchResults (searchId, propertyName, city, state, units, price, pricePerUnit, opportunityType, propertyType, urgencyLevel, score, dataSource) VALUES (0, 'Test Property', 'Austin', 'TX', 100, 10000000, 100000, 'new_listing', 'acquisition', 'developing', 60, 'Manual Test')",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2gwSzaetZSVyz5m.fba15b8e99c7 --database Hb3s7K6xobHd93nxmxrj6P --execute INSERT INTO searchResults (searchId, propertyName, city, state, units, price, pricePerUnit, opportunityType, propertyType, urgencyLevel, score, dataSource) VALUES (0, 'Test Property', 'Austin', 'TX', 100, 10000000, 100000, 'new_listing', 'acquisition', 'developing', 60, 'Manual Test')",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1452 (23000) at line 1: Cannot add or update a child row: a foreign key constraint fails (`hb3s7k6xobhd93nxmxrj6p`.`searchresults`, CONSTRAINT `searchResults_searchId_propertySearches_id_fk` FOREIGN KEY (`searchId`) REFERENCES `propertysearches` (`id`) ON DELETE CASCADE ON UPDATE N)"
+  ]
+}

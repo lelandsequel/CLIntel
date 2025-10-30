@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO propertySearches (name, geographicArea, status, totalResults) VALUES ('Manual Entries', 'Various', 'completed', 0)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2gwSzaetZSVyz5m.fba15b8e99c7 --database Hb3s7K6xobHd93nxmxrj6P --execute INSERT INTO propertySearches (name, geographicArea, status, totalResults) VALUES ('Manual Entries', 'Various', 'completed', 0)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 60
+}

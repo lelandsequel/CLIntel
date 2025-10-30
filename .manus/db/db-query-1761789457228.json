@@ -1,0 +1,9 @@
+{
+  "query": "SELECT * FROM searchResults WHERE searchId = 0 LIMIT 5",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2gwSzaetZSVyz5m.fba15b8e99c7 --database Hb3s7K6xobHd93nxmxrj6P --execute SELECT * FROM searchResults WHERE searchId = 0 LIMIT 5",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 760
+}

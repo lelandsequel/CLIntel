@@ -132,6 +132,18 @@ export default function PropertyDetail() {
                     <span className="font-semibold">{property.occupancyRate}%</span>
                   </div>
                 )}
+                {property.currentOwner && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Current Owner</span>
+                    <span className="font-semibold">{property.currentOwner}</span>
+                  </div>
+                )}
+                {property.foreclosureStatus && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Foreclosure Status</span>
+                    <span className="font-semibold capitalize">{property.foreclosureStatus}</span>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -155,6 +167,20 @@ export default function PropertyDetail() {
                     <span className="font-semibold">${property.pricePerUnit.toLocaleString()}</span>
                   </div>
                 )}
+                {property.debtAmount && typeof property.debtAmount === 'number' && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Debt Amount</span>
+                    <span className="font-semibold">
+                      ${(property.debtAmount / 1000000).toFixed(2)}M
+                    </span>
+                  </div>
+                )}
+                {property.lender && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Lender</span>
+                    <span className="font-semibold">{property.lender}</span>
+                  </div>
+                )}
                 {property.capRate && (
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Cap Rate</span>
@@ -170,6 +196,34 @@ export default function PropertyDetail() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Buy Rationale */}
+          {property.buyRationale && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Buy Rationale</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="prose prose-sm max-w-none">
+                  <p className="whitespace-pre-wrap">{property.buyRationale}</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Notes */}
+          {property.notes && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Notes</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="prose prose-sm max-w-none">
+                  <p className="whitespace-pre-wrap">{property.notes}</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Source Information */}
           {property.sourceUrl && (

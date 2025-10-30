@@ -31,6 +31,13 @@ export default function PropertyUpload() {
     dataSource: '',
     sourceUrl: '',
     notes: '',
+    // Multifamily acquisition fields
+    debtAmount: '',
+    currentOwner: '',
+    lender: '',
+    acquisitionDateByOwner: '',
+    foreclosureStatus: '',
+    buyRationale: '',
   });
 
   const createProperty = trpc.properties.create.useMutation({
@@ -52,6 +59,12 @@ export default function PropertyUpload() {
         dataSource: '',
         sourceUrl: '',
         notes: '',
+        debtAmount: '',
+        currentOwner: '',
+        lender: '',
+        acquisitionDateByOwner: '',
+        foreclosureStatus: '',
+        buyRationale: '',
       });
     },
     onError: (error) => {
@@ -63,7 +76,7 @@ export default function PropertyUpload() {
     onSuccess: (data) => {
       toast.success(`Successfully added ${data.count} properties`);
       setBulkText('');
-      setLocation('/properties');
+      setLocation('/acquisitions');
     },
     onError: (error) => {
       toast.error(`Bulk upload failed: ${error.message}`);
@@ -250,6 +263,55 @@ export default function PropertyUpload() {
                     value={formData.sourceUrl}
                     onChange={(e) => setFormData({ ...formData, sourceUrl: e.target.value })}
                     placeholder="https://loopnet.com/..."
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="debtAmount">Debt Amount</Label>
+                  <Input
+                    id="debtAmount"
+                    value={formData.debtAmount}
+                    onChange={(e) => setFormData({ ...formData, debtAmount: e.target.value })}
+                    placeholder="$42,000,000"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="currentOwner">Current Owner</Label>
+                  <Input
+                    id="currentOwner"
+                    value={formData.currentOwner}
+                    onChange={(e) => setFormData({ ...formData, currentOwner: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="lender">Lender</Label>
+                  <Input
+                    id="lender"
+                    value={formData.lender}
+                    onChange={(e) => setFormData({ ...formData, lender: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="foreclosureStatus">Foreclosure Status</Label>
+                  <Input
+                    id="foreclosureStatus"
+                    value={formData.foreclosureStatus}
+                    onChange={(e) => setFormData({ ...formData, foreclosureStatus: e.target.value })}
+                    placeholder="October 2025 auction"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="buyRationale">Buy Rationale</Label>
+                  <Textarea
+                    id="buyRationale"
+                    value={formData.buyRationale}
+                    onChange={(e) => setFormData({ ...formData, buyRationale: e.target.value })}
+                    placeholder="Enter investment thesis (one reason per line)"
+                    rows={3}
                   />
                 </div>
 

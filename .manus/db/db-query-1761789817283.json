@@ -1,0 +1,16 @@
+{
+  "query": "SELECT id FROM propertySearches WHERE name = 'Manual Entries'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2gwSzaetZSVyz5m.fba15b8e99c7 --database Hb3s7K6xobHd93nxmxrj6P --execute SELECT id FROM propertySearches WHERE name = 'Manual Entries'",
+  "rows": [
+    {
+      "id": "60001"
+    },
+    {
+      "id": "60002"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\n60001\n60002\n",
+  "stderr": "",
+  "execution_time_ms": 202
+}

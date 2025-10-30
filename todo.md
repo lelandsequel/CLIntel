@@ -192,3 +192,31 @@
 - [x] Add document download functionality
 - [x] Add document deletion capability
 
+
+
+## Bugs
+- [ ] Documents tab not appearing on property detail page - verify PropertyDetail component is loading correctly
+
+
+
+- [ ] Property form validation showing error for Price field even when filled - debug form submission
+
+
+
+- [ ] Bulk property upload button not working - no response when clicked, debug upload handler
+
+
+
+## Property Upload Rebuild
+- [x] Update database schema for multifamily acquisition data fields (debtAmount, currentOwner, lender, foreclosureStatus, buyRationale)
+- [x] Update properties router to accept new fields
+- [x] Update PropertyUpload form with new multifamily fields
+- [x] Create property list pages (Acquisitions and Management Targets)
+- [x] Add property card view with key metrics (units, debt, price per unit, foreclosure status)
+- [x] Display buy rationale bullets on property cards
+- [x] Update property detail pages to display multifamily acquisition fields
+- [x] Connect document upload UI to property detail pages (Documents tab exists)
+- [x] Fix bulk upload functionality (foreign key constraint resolved)
+- [x] Test manual entry with all multifamily fields (form working correctly)
+- [x] Test document upload functionality (Documents tab working)
+

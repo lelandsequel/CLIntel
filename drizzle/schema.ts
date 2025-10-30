@@ -237,6 +237,14 @@ export const searchResults = mysqlTable("searchResults", {
   propertyType: mysqlEnum("propertyType", ["acquisition", "management_target"]).default("acquisition").notNull(),
   urgencyLevel: mysqlEnum("urgencyLevel", ["immediate", "developing", "future"]).notNull(),
   
+  // Multifamily Acquisition Fields
+  debtAmount: varchar("debtAmount", { length: 50 }),
+  currentOwner: text("currentOwner"),
+  lender: text("lender"),
+  acquisitionDateByOwner: varchar("acquisitionDateByOwner", { length: 50 }),
+  foreclosureStatus: text("foreclosureStatus"),
+  buyRationale: text("buyRationale"), // JSON array of bullet points
+  
   // Metrics
   occupancyRate: decimal("occupancyRate", { precision: 5, scale: 2 }),
   capRate: decimal("capRate", { precision: 5, scale: 2 }),

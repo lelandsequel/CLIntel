@@ -39,7 +39,7 @@ export default function ManagementTargets() {
   if (isLoading) {
     return (
       <div className="container py-8">
-        <div className="text-center">Loading management_target targets...</div>
+        <div className="text-center">Loading management targets...</div>
       </div>
     );
   }
@@ -49,9 +49,9 @@ export default function ManagementTargets() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold">Management Targets</h1>
-          <p className="text-muted-foreground mt-2">
-            Properties identified for potential management_target
-          </p>
+          <div className="text-muted-foreground mt-2">
+            Properties identified for potential management
+          </div>
         </div>
         <Link href="/properties/upload">
           <Button>
@@ -65,7 +65,7 @@ export default function ManagementTargets() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Building2 className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No management_target targets yet</h3>
+            <h3 className="text-lg font-semibold mb-2">No management targets yet</h3>
             <p className="text-muted-foreground text-center mb-4">
               Upload properties you're interested in managing
             </p>
@@ -133,6 +133,44 @@ export default function ManagementTargets() {
                     </div>
                   )}
                 </div>
+
+                {/* Multifamily Acquisition Details */}
+                {(property.debtAmount || property.currentOwner || property.lender || property.foreclosureStatus) && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4 p-3 bg-muted/50 rounded-lg">
+                    {property.debtAmount && (
+                      <div>
+                        <div className="text-sm text-muted-foreground">Debt Amount</div>
+                        <div className="font-medium">{property.debtAmount}</div>
+                      </div>
+                    )}
+                    {property.currentOwner && (
+                      <div>
+                        <div className="text-sm text-muted-foreground">Current Owner</div>
+                        <div className="font-medium">{property.currentOwner}</div>
+                      </div>
+                    )}
+                    {property.lender && (
+                      <div>
+                        <div className="text-sm text-muted-foreground">Lender</div>
+                        <div className="font-medium">{property.lender}</div>
+                      </div>
+                    )}
+                    {property.foreclosureStatus && (
+                      <div>
+                        <div className="text-sm text-muted-foreground">Foreclosure Status</div>
+                        <div className="font-medium text-red-600">{property.foreclosureStatus}</div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Buy Rationale */}
+                {property.buyRationale && (
+                  <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                    <div className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">Buy Rationale</div>
+                    <div className="text-sm text-blue-800 dark:text-blue-200 whitespace-pre-line">{property.buyRationale}</div>
+                  </div>
+                )}
 
                 <div className="flex items-center gap-2 flex-wrap">
                   <Badge variant="secondary">
