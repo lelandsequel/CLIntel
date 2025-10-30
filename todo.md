@@ -231,3 +231,10 @@
 - [x] Show preview of parsed properties before upload
 - [x] Handle errors and validation for malformed text files
 
+
+
+## Rebranding and Git Push
+- [ ] Rename app from "C&L Property" to "C&L Intel"
+- [ ] Update app title and branding to show "a product of C&L Strategy"
+- [ ] Push code to GitHub repository: https://github.com/lelandsequel/CLIntel
+
